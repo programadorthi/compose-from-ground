@@ -3,13 +3,17 @@ data class TodoItem(
     val completed: Boolean = false
 )
 
-fun TodoApp(items: List<TodoItem>): Node {
-    return Stack(Orientation.Vertical).apply {
+fun Composer.TodoItem(item: TodoItem) {
+    emit(Stack(Orientation.Horizontal)) {
+        emit(Text(if (item.completed) "x" else " "))
+        emit(Text(item.title))
+    }
+}
+
+fun Composer.TodoApp(items: List<TodoItem>) {
+    emit(Stack(Orientation.Vertical)) {
         for (item in items) {
-            children.add(Stack(Orientation.Horizontal).apply {
-                children.add(Text(if (item.completed) "x" else " "))
-                children.add(Text(item.title))
-            })
+            TodoItem(item)
         }
     }
 }
