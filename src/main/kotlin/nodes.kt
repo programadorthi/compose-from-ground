@@ -13,7 +13,7 @@ class Stack(var orientation: Orientation) : Node() {
     }
 }
 
-class Text(var text: String) : Node() {
+class Text(var text: String? = null) : Node() {
     override fun render() {
         println(">> $this -> $text")
         children.forEach { it.render() }

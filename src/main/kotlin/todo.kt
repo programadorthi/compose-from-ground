@@ -4,24 +4,27 @@ data class TodoItem(
 )
 
 fun Composer.TodoItem(item: TodoItem) {
-    emit(memo { Stack(Orientation.Horizontal) }) {
+    emit({ Stack(Orientation.Horizontal) }) {
         emit(
-            memo(item.completed) {
-                Text(if (item.completed) "x" else " ")
-            }
+            { Text() },
+            { memo(item.completed) { it.text = if (item.completed) "x" else " " } }
         )
         emit(
-            memo(item.title) {
-                Text(item.title)
-            }
+            { Text() },
+            { memo(item.title) { it.text = item.title } }
         )
     }
 }
 
 fun Composer.TodoApp(items: List<TodoItem>) {
-    emit(memo { Stack(Orientation.Vertical) }) {
+    emit({ Stack(Orientation.Vertical) }) {
         for (item in items) {
             TodoItem(item)
         }
     }
+    val text = "Total: ${items.size} items"
+    emit(
+        { Text() },
+        { memo(text) { it.text = text }}
+    )
 }

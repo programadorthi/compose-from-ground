@@ -6,6 +6,12 @@ interface Composer {
     // Compare each input with the previous value at this position. If any
     // have changed, return result of factory, otherwise return previous result
     fun <T> memo(vararg inputs: Any?, factory: () -> T): T
+
+    fun <T : Node> emit(
+        factory: () -> T,
+        update: (T) -> Unit = {},
+        block: () -> Unit = {}
+    )
 }
 
 class ComposerImpl(root: Node) : Composer {
@@ -35,6 +41,16 @@ class ComposerImpl(root: Node) : Composer {
             valid = !changed(input) && valid
         }
         return cache(!valid) { factory() }
+    }
+
+    override fun <T : Node> emit(
+        factory: () -> T,
+        update: (T) -> Unit,
+        block: () -> Unit
+    ) {
+        val node = memo { factory() }
+        update(node)
+        emit(node, block)
     }
 
     private fun get(): Any? = cache[index++]
@@ -67,8 +83,12 @@ class ComposerImpl(root: Node) : Composer {
         // if we are asked to update the value, or if it is the first time
         // the cache is consulted, we need to execute the factory, and save
         // the result
-        return if (inserting || update) factory().also { set(it) }
+        return if (inserting || update) {
+            factory().also { set(it) }
+        }
         // otherwise, just return the value in the cache
-        else get() as T
+        else {
+            get() as T
+        }
     }
 }
